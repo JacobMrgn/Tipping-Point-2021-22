@@ -1,0 +1,3 @@
+- Pure Pursuit 
+- Debug menu
+- Less jank PID
