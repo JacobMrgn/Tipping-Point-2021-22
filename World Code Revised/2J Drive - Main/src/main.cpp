@@ -7,7 +7,7 @@
 // Controller1          controller                    
 // ArmClaw              motor         20              
 // Arm                  motor_group   9, 10           
-// BackClaw             motor         11               
+// BackClaw             motor         11              
 // RightWheelEncoder    rotation      19              
 // LeftWheelEncoder     rotation      18              
 // InertialSensor       inertial      16              
