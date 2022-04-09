@@ -75,26 +75,27 @@ competition Competition;
       int rightWheelPosition = RightWheelEncoder.position(degrees);
       int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
 
+      //BackClaw Limit
+        if ((0 - BackClawEncoder.position(degrees)) <= 55 && BackClawSet ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) <= 55 && BackClawSet ==true){
+          BackClaw.spin(forward, 6, voltageUnits::volt);
+        }
 
-        BackClaw.spin(forward, 6, voltageUnits::volt);
-      }
+        if ((0 - BackClawEncoder.position(degrees)) >= 55 && BackClawSet ==true) {
 
-      if ((0 - BackClawEncoder.position(degrees)) >= 55 && BackClawSet ==true) {
+          BackClaw.stop(hold);
+        }
 
-        BackClaw.stop(hold);
-      }
+      //BackClaw Limit 2
+        if ((0 - BackClawEncoder.position(degrees)) >= BackClawlimit && BackClawGrabTower ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) >= BackClawlimit && BackClawGrabTower ==true){
+          BackClaw.spin(reverse, 4, voltageUnits::volt);
+        }
 
-        BackClaw.spin(reverse, 4, voltageUnits::volt);
-      }
+        if ((0 - BackClawEncoder.position(degrees)) <= BackClawlimit && BackClawGrabTower ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) <= BackClawlimit && BackClawGrabTower ==true){
-
-        BackClaw.stop(hold);
-      }
+          BackClaw.stop(hold);
+        }
 
 
       //Lateral PD
