@@ -16,7 +16,7 @@
 // FRW                  motor         7               
 // BRW                  motor         4               
 // BackClawEncoder      rotation      17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- END VEXCODE CONFIGURED DEVICES ---- 
           
 using namespace vex;
 competition Competition;
