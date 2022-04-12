@@ -16,7 +16,7 @@
 // FRW                  motor         7               
 // BRW                  motor         4               
 // BackClawEncoder      rotation      17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- END VEXCODE CONFIGURED DEVICES ---- 
           
 using namespace vex;
 competition Competition;
@@ -75,26 +75,27 @@ competition Competition;
       int rightWheelPosition = RightWheelEncoder.position(degrees);
       int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
 
+      //BackClaw Limit
+        if ((0 - BackClawEncoder.position(degrees)) <= 55 && BackClawSet ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) <= 55 && BackClawSet ==true){
+          BackClaw.spin(forward, 6, voltageUnits::volt);
+        }
 
-        BackClaw.spin(forward, 6, voltageUnits::volt);
-      }
+        if ((0 - BackClawEncoder.position(degrees)) >= 55 && BackClawSet ==true) {
 
-      if ((0 - BackClawEncoder.position(degrees)) >= 55 && BackClawSet ==true) {
+          BackClaw.stop(hold);
+        }
 
-        BackClaw.stop(hold);
-      }
+      //BackClaw Limit 2
+        if ((0 - BackClawEncoder.position(degrees)) >= BackClawlimit && BackClawGrabTower ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) >= BackClawlimit && BackClawGrabTower ==true){
+          BackClaw.spin(reverse, 4, voltageUnits::volt);
+        }
 
-        BackClaw.spin(reverse, 4, voltageUnits::volt);
-      }
+        if ((0 - BackClawEncoder.position(degrees)) <= BackClawlimit && BackClawGrabTower ==true){
 
-      if ((0 - BackClawEncoder.position(degrees)) <= BackClawlimit && BackClawGrabTower ==true){
-
-        BackClaw.stop(hold);
-      }
+          BackClaw.stop(hold);
+        }
 
 
       //Lateral PD
@@ -237,7 +238,9 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 void usercontrol(void) {
   // Set Up
+      //Stuff you don't wants running during driver
     enableDrivePID = false;
+    resetDriveSensors = false;  
 
     double ClawSpeed = 6; //Volts
     double ArmSpeed = 9.6; //Volts
@@ -259,12 +262,10 @@ void usercontrol(void) {
 
     double TemperatureLimit = 55; //Degrees C
 
-  while (true) {
-    // ........................................................................
-    //Stuff you don't wants running during driver
-      enableDrivePID = false;
-      resetDriveSensors = false;
+    BackClawEncoder.resetPosition(); 
 
+  while (true) {                                             
+    // ........................................................................
     //Driver Variables
       double straight = Controller1.Axis2.position(vex::percent) * 0.12;
       double yaw = (Controller1.Axis1.position(vex::percent)* 0.75) * 0.12;
@@ -299,6 +300,7 @@ void usercontrol(void) {
         FLW.stop(brake);
         BLW.stop(brake);
       }
+
     //Claw Control
       if (Controller1.ButtonL2.pressing()) {
 
