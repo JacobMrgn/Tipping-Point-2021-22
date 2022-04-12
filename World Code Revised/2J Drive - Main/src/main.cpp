@@ -238,7 +238,9 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 void usercontrol(void) {
   // Set Up
+      //Stuff you don't wants running during driver
     enableDrivePID = false;
+    resetDriveSensors = false;  
 
     double ClawSpeed = 6; //Volts
     double ArmSpeed = 9.6; //Volts
@@ -260,12 +262,10 @@ void usercontrol(void) {
 
     double TemperatureLimit = 55; //Degrees C
 
+    BackClawEncoder.resetPosition(); 
+
   while (true) {
     // ........................................................................
-    //Stuff you don't wants running during driver
-      enableDrivePID = false;
-      resetDriveSensors = false;
-
     //Driver Variables
       double right = Controller1.Axis2.position(vex::percent) * 0.12;
       double left = Controller1.Axis3.position(vex::percent) * 0.12;
