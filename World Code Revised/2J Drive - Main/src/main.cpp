@@ -264,7 +264,7 @@ void usercontrol(void) {
 
     BackClawEncoder.resetPosition(); 
 
-  while (true) {
+  while (true) {                                             
     // ........................................................................
     //Driver Variables
       double right = Controller1.Axis2.position(vex::percent) * 0.12;
