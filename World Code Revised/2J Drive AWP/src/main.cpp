@@ -74,7 +74,7 @@ competition Competition;
       int leftWheelPosition = LeftWheelEncoder.position(degrees);
       int rightWheelPosition = RightWheelEncoder.position(degrees);
       int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
-
+      /*
       //BackClaw Limit
         if ((0 - BackClawEncoder.position(degrees)) <= 75 && BackClawSet ==true){
 
@@ -96,7 +96,7 @@ competition Competition;
 
           BackClaw.stop(hold);
         }
-
+        */
 
       //Lateral PD
         //P
@@ -153,82 +153,43 @@ void autonomous(void) {
 
   BackClawEncoder.resetPosition();
 
-  //Forward until it hits the first tower and grabs it   NOTE:: Back claw moves to downward position
-  resetDriveSensors = true;
-  desiredTurnValue = 0;
-  desiredValue = 1574;
+  Arm.spin(forward, 7.5, voltageUnits::volt);
   wait(1000, msec);
-  waitUntil(FRW.velocity(rpm) <= 10);
-
-  ArmClaw.spin(forward, 6, voltageUnits::volt);
-  wait(250, msec);
-
-  //While holding tower lifts it and backs away
-  resetDriveSensors = true;
-  desiredValue = -800;
-  Arm.spin(forward, 6, voltageUnits::volt);
-  wait(350, msec);
-  Arm.stop(hold);
-  wait(500, msec);
-  waitUntil(FRW.velocity(rpm) <= 10);
-
-  wait(100, msec);
-
-  //Turns to have back face tall neutral goal and drops goal it's holding
-  resetDriveSensors = true;
-  desiredTurnValue = 150;
+  Arm.spin(reverse, 7.5, voltageUnits::volt);
   wait(1000, msec);
-  waitUntil(FRW.velocity(rpm) <= 5);
-
-  ArmClaw.spin(reverse, 6, voltageUnits::volt);
-  wait(250, msec);
-  ArmClaw.stop(brake);
-
-  //Goes back to line up with tower and grabs it
-  resetDriveSensors = true;
-  desiredValue = -1350;
-  wait(1000, msec);
-  waitUntil(FRW.velocity(rpm) <= 5);
 
   resetDriveSensors = true;
-  desiredValue = 0;
-
-  wait(1000, msec);
-  BackClawSet = false;
-  BackClawGrabTower = true;
-
-  waitUntil((0 - BackClawEncoder.position(degrees)) <= BackClawlimit || timerVar >= 8);
-
-  //Moves forward and turns scoring the tall neutral goal 
-  leftMotorPower = -9;
-
-  resetDriveSensors = true;
-  desiredValue = 2300;
+  desiredValue = 1000;
+  desiredTurnValue = 170;
   wait(1000, msec);
   waitUntil(FRW.velocity(rpm) <= 0);
 
-  FRW.stop(brake);
-  FLW.stop(brake);
-  BRW.stop(brake);
-  BLW.stop(brake);
+  wait(500, msec);
+
+  resetDriveSensors = true;
+  desiredValue = 4500;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 0);
+
+  ArmClaw.spin(reverse, 6, voltageUnits::volt);
+  wait(250, msec);
+  ArmClaw.stop(hold);
 
   Arm.spin(forward, 6, voltageUnits::volt);
+  wait(1500, msec);
+  Arm.stop(hold);
+
+  resetDriveSensors = true;
+  desiredValue = -1500;
   wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 0);
+
   Arm.stop(coast);
-  wait(100, msec);
-  Arm.stop(brake);
+  wait(1000, msec); 
 
-  Arm.spin(reverse, 6, voltageUnits::volt);
-  wait(1000, msec);
-  Arm.stop(coast);
-  wait(100, msec);
-  Arm.stop(brake);
-
-  BackClawGrabTower = false;
-
-  BackClaw.spin(forward, 4.5, voltageUnits::volt);
-  wait(1000, msec);
-  BackClaw.stop(brake);
+  ArmClaw.spin(forward, 6, voltageUnits::volt);
+  wait(250, msec);
+  ArmClaw.stop(coast);
 
   vex::task::sleep(1000);
   // ..........................................................................
