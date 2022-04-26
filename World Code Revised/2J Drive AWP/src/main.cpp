@@ -25,8 +25,8 @@ competition Competition;
 /*                             Global Variables                              */
 /*---------------------------------------------------------------------------*/
   float inchesforward;
-  float rightMotorPower = 0.0;
-  float leftMotorPower = 0.0;
+  float rightMotorPower = 1.0;
+  float leftMotorPower = 1.0;
   float BackClawlimit = 28.0;
   bool BackClawSet = true;
   bool BackClawGrabTower = false;
@@ -45,18 +45,18 @@ competition Competition;
     double turnkD = 0.2;
 
   //PD Variables
-    int desiredValue = 360 * inchesforward/12.5663;
-    int desiredTurnValue = 0;
+    float desiredValue = 360 * inchesforward/12.5663;
+    float desiredTurnValue = 0;
 
-    int error; 
-    int prevError = 0;
-    int derivative;
-    int totalError = 0; 
+    float error; 
+    float prevError = 0;
+    float derivative;
+    float totalError = 0; 
 
-    int turnError; 
-    int turnPrevError = 0; 
-    int turnDerivative; 
-    int turnTotalError = 0; 
+    float turnError; 
+    float turnPrevError = 0; 
+    float turnDerivative; 
+    float turnTotalError = 0; 
 
     bool resetDriveSensors = false;
     bool enableDrivePID = true;
@@ -71,9 +71,9 @@ competition Competition;
       }
 
       double turnDifference = InertialSensor.orientation(vex::yaw, degrees);
-      int leftWheelPosition = LeftWheelEncoder.position(degrees);
-      int rightWheelPosition = RightWheelEncoder.position(degrees);
-      int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
+      float leftWheelPosition = LeftWheelEncoder.position(degrees);
+      float rightWheelPosition = RightWheelEncoder.position(degrees);
+      float averagePosition = (leftWheelPosition + rightWheelPosition)/2;
       /*
       //BackClaw Limit
         if ((0 - BackClawEncoder.position(degrees)) <= 75 && BackClawSet ==true){
@@ -114,10 +114,10 @@ competition Competition;
 
         double turnMotorPower = turnError * turnkP + turnDerivative * turnkD;
 
-      FLW.spin(forward, lateralMotorPower + turnMotorPower + leftMotorPower, voltageUnits::volt);
-      BLW.spin(forward, lateralMotorPower + turnMotorPower + leftMotorPower, voltageUnits::volt);
-      FRW.spin(forward, lateralMotorPower - turnMotorPower + rightMotorPower, voltageUnits::volt);
-      BRW.spin(forward, lateralMotorPower - turnMotorPower + rightMotorPower, voltageUnits::volt);
+      BLW.spin(forward, (lateralMotorPower + turnMotorPower) * leftMotorPower, voltageUnits::volt);
+      FLW.spin(forward, (lateralMotorPower + turnMotorPower) * leftMotorPower, voltageUnits::volt);
+      FRW.spin(forward, (lateralMotorPower - turnMotorPower) * rightMotorPower, voltageUnits::volt);
+      BRW.spin(forward, (lateralMotorPower - turnMotorPower) * rightMotorPower, voltageUnits::volt);
       
 
       prevError = error;
@@ -153,19 +153,32 @@ void autonomous(void) {
 
   BackClawEncoder.resetPosition();
 
+/*
   Arm.spin(forward, 7.5, voltageUnits::volt);
   wait(1000, msec);
+  ArmClaw.spin(reverse, 6, voltageUnits::volt);
   Arm.spin(reverse, 7.5, voltageUnits::volt);
   wait(1000, msec);
+  ArmClaw.stop(coast);
 
   resetDriveSensors = true;
   desiredValue = 1000;
-  desiredTurnValue = 170;
+  desiredTurnValue = 175;
   wait(1000, msec);
   waitUntil(FRW.velocity(rpm) <= 0);
 
   wait(500, msec);
 
+  resetDriveSensors = true;
+  wait(1000, msec);
+  resetDriveSensors = true;
+  desiredValue = 0;
+  desiredTurnValue = 0;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 0);
+
+  resetDriveSensors = true;
+  wait(1000, msec);
   resetDriveSensors = true;
   desiredValue = 4500;
   wait(1000, msec);
@@ -175,12 +188,13 @@ void autonomous(void) {
   wait(250, msec);
   ArmClaw.stop(hold);
 
-  Arm.spin(forward, 6, voltageUnits::volt);
+  ArmClaw.spin(forward, 6, voltageUnits::volt);
   wait(1500, msec);
   Arm.stop(hold);
 
   resetDriveSensors = true;
   desiredValue = -1500;
+  desiredTurnValue = 0;
   wait(1000, msec);
   waitUntil(FRW.velocity(rpm) <= 0);
 
@@ -190,8 +204,51 @@ void autonomous(void) {
   ArmClaw.spin(forward, 6, voltageUnits::volt);
   wait(250, msec);
   ArmClaw.stop(coast);
+*/
 
-  vex::task::sleep(1000);
+Arm.spin(forward, 6, voltageUnits::volt);
+wait(1500, msec);
+Arm.spin(reverse, 6, voltageUnits::volt);
+ArmClaw.spin(reverse, 6, voltageUnits::volt);
+wait(1500, msec);
+Arm.stop(coast);
+ArmClaw.stop(coast);
+
+resetDriveSensors = true;
+desiredValue = 600;
+desiredTurnValue = 175;
+wait(1000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
+
+leftMotorPower = 0.5;
+rightMotorPower = 0.5;
+resetDriveSensors = true;
+desiredValue = 2000;
+wait(3000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
+leftMotorPower = 1;
+rightMotorPower = 1;
+
+wait(500, msec);
+
+
+
+ArmClaw.spin(forward, 6, voltageUnits::volt);
+wait(500, msec);
+ArmClaw.stop(hold);
+
+wait(1000, msec);
+
+resetDriveSensors = true;
+desiredValue = -500;
+wait(5000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
+
+ArmClaw.spin(reverse, 6, voltageUnits::volt);
+wait(500, msec);
+ArmClaw.stop(coast);
+
+vex::task::sleep(1000);
   // ..........................................................................
 }
 /*---------------------------------------------------------------------------*/ 
