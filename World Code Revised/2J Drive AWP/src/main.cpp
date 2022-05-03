@@ -206,42 +206,55 @@ void autonomous(void) {
   ArmClaw.stop(coast);
 */
 
-Arm.spin(forward, 6, voltageUnits::volt);
-wait(1500, msec);
-Arm.spin(reverse, 6, voltageUnits::volt);
-ArmClaw.spin(reverse, 6, voltageUnits::volt);
-wait(1500, msec);
+Arm.spin(forward, 4.5, voltageUnits::volt);
+wait(2000, msec);
+Arm.spin(reverse, 4.5, voltageUnits::volt);
+ArmClaw.spin(reverse, 4.5, voltageUnits::volt);
+wait(2000, msec);
 Arm.stop(coast);
 ArmClaw.stop(coast);
 
+leftMotorPower = 2;
+rightMotorPower = 2;
 resetDriveSensors = true;
-desiredValue = 600;
-desiredTurnValue = 175;
+desiredValue = 300;
+wait(1000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
+
+leftMotorPower = 1;
+rightMotorPower = 1;
+resetDriveSensors = true;
+desiredTurnValue = 140;
+wait(1000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
+
+resetDriveSensors = true;
+desiredValue = 750;
 wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
 
 leftMotorPower = 0.5;
 rightMotorPower = 0.5;
 resetDriveSensors = true;
-desiredValue = 2000;
-wait(3000, msec);
+desiredTurnValue = 170;
+wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
+
 leftMotorPower = 1;
 rightMotorPower = 1;
+resetDriveSensors = true;
+desiredValue = 2000;
+wait(1000, msec);
+waitUntil(FRW.velocity(rpm) <= 0);
 
 wait(500, msec);
-
-
 
 ArmClaw.spin(forward, 6, voltageUnits::volt);
 wait(500, msec);
-ArmClaw.stop(hold);
-
-wait(1000, msec);
 
 resetDriveSensors = true;
-desiredValue = -500;
-wait(5000, msec);
+desiredValue = -1500;
+wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
 
 ArmClaw.spin(reverse, 6, voltageUnits::volt);
