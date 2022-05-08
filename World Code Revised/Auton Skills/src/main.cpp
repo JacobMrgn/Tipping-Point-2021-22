@@ -213,7 +213,7 @@ void autonomous(void) {
 
   //score last yellow goal
   resetDriveSensors = true;
-  desiredValue = -2500;
+  desiredValue = -3250;
   desiredTurnValue = 0;
   wait(1000, msec);
   waitUntil(FRW.velocity(rpm) <= 0);

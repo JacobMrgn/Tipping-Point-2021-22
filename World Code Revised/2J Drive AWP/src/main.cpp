@@ -151,8 +151,6 @@ void autonomous(void) {
   enableDrivePID = true;
   enableTimer = true;
 
-  BackClawEncoder.resetPosition();
-
 /*
   Arm.spin(forward, 7.5, voltageUnits::volt);
   wait(1000, msec);
@@ -206,54 +204,56 @@ void autonomous(void) {
   ArmClaw.stop(coast);
 */
 
-Arm.spin(forward, 4.5, voltageUnits::volt);
-wait(2000, msec);
-Arm.spin(reverse, 4.5, voltageUnits::volt);
-ArmClaw.spin(reverse, 4.5, voltageUnits::volt);
-wait(2000, msec);
-Arm.stop(coast);
-ArmClaw.stop(coast);
+leftMotorPower = 1;
+rightMotorPower = 1;
 
-leftMotorPower = 2;
-rightMotorPower = 2;
+Arm.spin(forward, 6, voltageUnits::volt);
+wait(2500, msec);
+Arm.spin(reverse, 6, voltageUnits::volt);
+ArmClaw.spin(reverse, 3, voltageUnits::volt);
+
 resetDriveSensors = true;
 desiredValue = 300;
 wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
 
-leftMotorPower = 1;
-rightMotorPower = 1;
+Arm.stop(coast);
+
 resetDriveSensors = true;
 desiredTurnValue = 140;
 wait(1000, msec);
-waitUntil(FRW.velocity(rpm) <= 0);
+waitUntil(FRW.velocity(rpm) <= 10);
 
+leftMotorPower = 1.5;
+rightMotorPower = 1.5;
 resetDriveSensors = true;
-desiredValue = 750;
-wait(1000, msec);
-waitUntil(FRW.velocity(rpm) <= 0);
-
-leftMotorPower = 0.5;
-rightMotorPower = 0.5;
-resetDriveSensors = true;
-desiredTurnValue = 170;
+desiredValue = 700;
 wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
 
 leftMotorPower = 1;
 rightMotorPower = 1;
 resetDriveSensors = true;
+desiredTurnValue = 167;
+wait(1000, msec);
+waitUntil(FRW.velocity(rpm) <= 10);
+
+leftMotorPower = 1.75;
+rightMotorPower = 1.75;
+resetDriveSensors = true;
 desiredValue = 2000;
 wait(1000, msec);
-waitUntil(FRW.velocity(rpm) <= 0);
+waitUntil(FRW.velocity(rpm) <= 10);
 
 wait(500, msec);
 
 ArmClaw.spin(forward, 6, voltageUnits::volt);
 wait(500, msec);
 
+leftMotorPower = 2;
+rightMotorPower = 1.95;
 resetDriveSensors = true;
-desiredValue = -1500;
+desiredValue = -2000;
 wait(1000, msec);
 waitUntil(FRW.velocity(rpm) <= 0);
 
@@ -298,8 +298,8 @@ void usercontrol(void) {
   while (true) {                                             
     // ........................................................................
     //Driver Variables
-      double right = Controller1.Axis2.position(vex::percent) * 0.12;
-      double left = Controller1.Axis3.position(vex::percent) * 0.12;
+      double straight = Controller1.Axis2.position(vex::percent) * 0.12;
+      double yaw = (Controller1.Axis1.position(vex::percent)* 0.75) * 0.12;
 
       double BackClawPosition = (0 - BackClawEncoder.position(degrees));
 
@@ -318,23 +318,20 @@ void usercontrol(void) {
       double BatteryPercent = Brain.Battery.capacity();
 
     //Drive Control
-      //Two Joystick
-      FRW.spin(vex::forward, right, voltageUnits::volt);
-      BRW.spin(vex::forward, right, voltageUnits::volt);
-      FLW.spin(vex::forward, left, voltageUnits::volt);
-      BLW.spin(vex::forward, left, voltageUnits::volt);
+      //One Joystick
+      FRW.spin(vex::forward, straight - yaw, voltageUnits::volt);
+      BRW.spin(vex::forward, straight - yaw, voltageUnits::volt);
+      FLW.spin(vex::forward, straight + yaw, voltageUnits::volt);
+      BLW.spin(vex::forward, straight + yaw, voltageUnits::volt);
 
-      if (right == 0) {
+      if (straight == 0 & yaw == 0) {
 
         FRW.stop(brake);
         BRW.stop(brake);
-      }
-      if (left == 0) {
-
         FLW.stop(brake);
         BLW.stop(brake);
       }
-      
+
     //Claw Control
       if (Controller1.ButtonL2.pressing()) {
 

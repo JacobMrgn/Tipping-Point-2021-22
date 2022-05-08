@@ -76,12 +76,12 @@ competition Competition;
       int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
 
       //BackClaw Limit
-        if ((0 - BackClawEncoder.position(degrees)) <= 75 && BackClawSet ==true){
+        if ((0 - BackClawEncoder.position(degrees)) < 74.75 && BackClawSet ==true){//75
 
           BackClaw.spin(forward, 6, voltageUnits::volt);
         }
 
-        if ((0 - BackClawEncoder.position(degrees)) >= 75 && BackClawSet ==true) {
+        if ((0 - BackClawEncoder.position(degrees)) >= 74.75 && BackClawSet ==true) {//75
 
           BackClaw.stop(hold);
         }
@@ -260,15 +260,13 @@ void usercontrol(void) {
     Controller1.Screen.clearScreen();
     Brain.Screen.clearScreen();
 
-    double TemperatureLimit = 55; //Degrees C
-
-    BackClawEncoder.resetPosition(); 
+    double TemperatureLimit = 55; //Degrees C 
 
   while (true) {                                             
     // ........................................................................
     //Driver Variables
-      double right = Controller1.Axis2.position(vex::percent) * 0.12;
-      double left = Controller1.Axis3.position(vex::percent) * 0.12;
+      double straight = Controller1.Axis2.position(vex::percent) * 0.12;
+      double yaw = (Controller1.Axis1.position(vex::percent)* 0.75) * 0.12;
 
       double BackClawPosition = (0 - BackClawEncoder.position(degrees));
 
@@ -287,19 +285,16 @@ void usercontrol(void) {
       double BatteryPercent = Brain.Battery.capacity();
 
     //Drive Control
-      //Two Joystick
-      FRW.spin(vex::forward, right, voltageUnits::volt);
-      BRW.spin(vex::forward, right, voltageUnits::volt);
-      FLW.spin(vex::forward, left, voltageUnits::volt);
-      BLW.spin(vex::forward, left, voltageUnits::volt);
+      //One Joystick
+      FRW.spin(vex::forward, straight - yaw, voltageUnits::volt);
+      BRW.spin(vex::forward, straight - yaw, voltageUnits::volt);
+      FLW.spin(vex::forward, straight + yaw, voltageUnits::volt);
+      BLW.spin(vex::forward, straight + yaw, voltageUnits::volt);
 
-      if (right == 0) {
+      if (straight == 0 & yaw == 0) {
 
         FRW.stop(brake);
         BRW.stop(brake);
-      }
-      if (left == 0) {
-
         FLW.stop(brake);
         BLW.stop(brake);
       }

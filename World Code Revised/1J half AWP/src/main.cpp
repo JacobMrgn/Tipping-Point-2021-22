@@ -76,12 +76,12 @@ competition Competition;
       int averagePosition = (leftWheelPosition + rightWheelPosition)/2;
 
       //BackClaw Limit
-        if ((0 - BackClawEncoder.position(degrees)) <= 55 && BackClawSet ==true){
+        if ((0 - BackClawEncoder.position(degrees)) <= 75 && BackClawSet ==true){
 
           BackClaw.spin(forward, 6, voltageUnits::volt);
         }
 
-        if ((0 - BackClawEncoder.position(degrees)) >= 55 && BackClawSet ==true) {
+        if ((0 - BackClawEncoder.position(degrees)) >= 75 && BackClawSet ==true) {
 
           BackClaw.stop(hold);
         }
@@ -153,6 +153,44 @@ void autonomous(void) {
 
   BackClawEncoder.resetPosition();
 
+  rightMotorPower = 0.0;
+  leftMotorPower = 0.0;
+
+  FRW.stop(brake);
+  FLW.stop(brake);
+  BRW.stop(brake);
+  BLW.stop(brake);
+
+  ArmClaw.spin(forward, 6, voltageUnits::volt);
+  wait(500, msec);
+
+  ArmClaw.spin(reverse, 6, voltageUnits::volt);
+  wait(500, msec);
+  ArmClaw.stop(brake);
+
+  desiredTurnValue = 0;
+  desiredValue = -150;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 10);
+
+  resetDriveSensors = true;
+  desiredTurnValue = -77;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 5);
+
+  desiredValue = 1600;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 10);
+
+  ArmClaw.spin(forward, 6, voltageUnits::volt);
+  wait(500, msec);
+
+  desiredTurnValue = 0;
+  desiredValue = -1000;
+  wait(1000, msec);
+  waitUntil(FRW.velocity(rpm) <= 10);
+  /*
+
   //Forward until it hits the first tower and grabs it   NOTE:: Back claw moves to downward position
   resetDriveSensors = true;
   desiredTurnValue = 0;
@@ -174,7 +212,8 @@ void autonomous(void) {
 
   wait(100, msec);
 
-  //Turns to have back face tall neutural goal and drops goal its holding
+
+  //Turns to have back face tall neutral goal and drops goal it's holding
   resetDriveSensors = true;
   desiredTurnValue = 150;
   wait(1000, msec);
@@ -226,9 +265,10 @@ void autonomous(void) {
 
   BackClawGrabTower = false;
 
-  BackClaw.spin(forward, 9, voltageUnits::volt);
+  BackClaw.spin(forward, 4.5, voltageUnits::volt);
   wait(1000, msec);
   BackClaw.stop(brake);
+  */
 
   vex::task::sleep(1000);
   // ..........................................................................
@@ -260,9 +300,7 @@ void usercontrol(void) {
     Controller1.Screen.clearScreen();
     Brain.Screen.clearScreen();
 
-    double TemperatureLimit = 55; //Degrees C
-
-    BackClawEncoder.resetPosition();
+    double TemperatureLimit = 55; //Degrees C 
 
   while (true) {                                             
     // ........................................................................
@@ -300,7 +338,7 @@ void usercontrol(void) {
         FLW.stop(brake);
         BLW.stop(brake);
       }
-
+      
     //Claw Control
       if (Controller1.ButtonL2.pressing()) {
 
